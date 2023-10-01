@@ -3,11 +3,9 @@
 #include <time.h>
 
 /*****************************TEMPLATE INCLUDE**************************************/
-// #define LINKED_LIST_BUFFER_DEBUG
+#define LINKED_LIST_BUFFER_ENTRY_DATA_TYPE unsigned int
 #define LINKED_LIST_BUFFER_SIZE_AWARE
 #define LINKED_LIST_BUFFER_DUALLY_LINKED
-#define LINKED_LIST_BUFFER_ENTRY_DATA_TYPE unsigned int
-
 #define LINKED_LIST_INLINE_IMPLEMENTATION
 #define LINKED_LIST_STATIC_IMPLEMENTATION
 #define LINKED_LIST_ASSERT(...) assert(__VA_ARGS__)
