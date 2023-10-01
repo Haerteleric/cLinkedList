@@ -2,11 +2,22 @@
 #include <assert.h>
 #include <time.h>
 
+/*****************************TEMPLATE INCLUDE**************************************/
 // #define LINKED_LIST_BUFFER_DEBUG
 #define LINKED_LIST_BUFFER_SIZE_AWARE
 #define LINKED_LIST_BUFFER_DUALLY_LINKED
 #define LINKED_LIST_BUFFER_ENTRY_DATA_TYPE unsigned int
-#include "linkedListBuffer.h"
+
+#define LINKED_LIST_INLINE_IMPLEMENTATION
+#define LINKED_LIST_STATIC_IMPLEMENTATION
+#define LINKED_LIST_ASSERT(...) assert(__VA_ARGS__)
+
+//following just for testing
+#define LINKED_LIST_ONLY_PROTOTYPE_DECLARATION
+#include "linkedListBuffer.h" //Prototype
+#undef LINKED_LIST_ONLY_PROTOTYPE_DECLARATION
+#include "linkedListBuffer.h" //Implementation
+/***********************************************************************************/
 
 static linkedListBufferEntry_t bufferPool[10000];
 static linkedListBuffer_t s_linkedListBuffer = 

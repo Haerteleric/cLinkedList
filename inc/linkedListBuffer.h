@@ -8,14 +8,16 @@
  * 
  **/
 #define _LINKED_LIST_BUFFER_TEMPLATE_HEADER_
-#include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
 
-#ifdef LINKED_LIST_BUFFER_DEBUG
-#include <assert.h>
-#endif 
+#ifndef LINKED_LIST_ASSERT
+    #define LINKED_LIST_ASSERT(...) //stub
+#endif
 
+#ifdef LINKED_LIST_CONFIG_HEADER_INCLUDE
+    #include LINKED_LIST_CONFIG_HEADER_INCLUDE
+#endif
 
 #ifndef LINKED_LIST_BUFFER_ENTRY_DATA_TYPE
     #define LINKED_LIST_BUFFER_ENTRY_DATA_TYPE unsigned char
@@ -26,6 +28,9 @@
 
 typedef LINKED_LIST_BUFFER_ENTRY_DATA_TYPE linkedListBufferEntryDataType_t;
 typedef LINKED_LIST_BUFFER_ARITHMETIC_DATA_TYPE linkedListArithmeticDataType_t;
+
+#ifndef _LINKED_LIST_ENTRY_STRUCT_DEFINED
+#define _LINKED_LIST_ENTRY_STRUCT_DEFINED
 
 typedef struct linkedListBufferEntry_s
 {
@@ -38,6 +43,12 @@ typedef struct linkedListBufferEntry_s
 
 }linkedListBufferEntry_t;
 
+#endif //_LINKED_LIST_ENTRY_STRUCT_DEFINED
+
+
+#ifndef _LINKED_LIST_INSTANCE_STRUCT_DEFINED
+#define _LINKED_LIST_INSTANCE_STRUCT_DEFINED
+
 typedef struct linkedListBuffer_s
 {
     linkedListBufferEntry_t *           root;
@@ -48,7 +59,20 @@ typedef struct linkedListBuffer_s
 #endif
 }linkedListBuffer_t;
 
-inline static linkedListArithmeticDataType_t linkedList_getNumActiveBuffer(linkedListBuffer_t * handle)
+#endif //_LINKED_LIST_INSTANCE_STRUCT_DEFINED
+
+
+
+#ifdef LINKED_LIST_INLINE_IMPLEMENTATION
+inline
+#endif 
+#ifdef LINKED_LIST_STATIC_IMPLEMENTATION
+static
+#endif 
+linkedListArithmeticDataType_t linkedList_getNumActiveBuffer(linkedListBuffer_t * handle)
+#ifdef LINKED_LIST_ONLY_PROTOTYPE_DECLARATION
+;
+#else
 {
 #ifdef LINKED_LIST_BUFFER_SIZE_AWARE
     return handle->numActiveEntries;
@@ -73,13 +97,37 @@ inline static linkedListArithmeticDataType_t linkedList_getNumActiveBuffer(linke
     return numActive;
 #endif
 }
+#endif // NOT(LINKED_LIST_ONLY_PROTOTYPE_DECLARATION)
 
-inline static linkedListArithmeticDataType_t linkedList_getNumBufferLeft(linkedListBuffer_t * handle)
+
+
+#ifdef LINKED_LIST_INLINE_IMPLEMENTATION
+inline
+#endif 
+#ifdef LINKED_LIST_STATIC_IMPLEMENTATION
+static
+#endif 
+linkedListArithmeticDataType_t linkedList_getNumBufferLeft(linkedListBuffer_t * handle)
+#ifdef LINKED_LIST_ONLY_PROTOTYPE_DECLARATION
+;
+#else
 {
     return handle->bufferPoolSize - linkedList_getNumActiveBuffer(handle);
 }
+#endif // NOT(LINKED_LIST_ONLY_PROTOTYPE_DECLARATION)
 
-inline static linkedListBufferEntry_t * linkedList_getLast(linkedListBuffer_t * handle)
+
+
+#ifdef LINKED_LIST_INLINE_IMPLEMENTATION
+inline
+#endif 
+#ifdef LINKED_LIST_STATIC_IMPLEMENTATION
+static
+#endif 
+linkedListBufferEntry_t * linkedList_getLast(linkedListBuffer_t * handle)
+#ifdef LINKED_LIST_ONLY_PROTOTYPE_DECLARATION
+;
+#else
 {
     linkedListBufferEntry_t *  entry = handle->root;
     for (linkedListArithmeticDataType_t i = 0; i < handle->bufferPoolSize; i++)
@@ -92,12 +140,22 @@ inline static linkedListBufferEntry_t * linkedList_getLast(linkedListBuffer_t * 
     }
     return NULL; 
 }
+#endif // NOT(LINKED_LIST_ONLY_PROTOTYPE_DECLARATION)
 
-inline static linkedListBufferEntry_t * linkedList_getFirst(linkedListBuffer_t * handle)
+
+
+#ifdef LINKED_LIST_INLINE_IMPLEMENTATION
+inline
+#endif 
+#ifdef LINKED_LIST_STATIC_IMPLEMENTATION
+static
+#endif 
+linkedListBufferEntry_t * linkedList_getFirst(linkedListBuffer_t * handle)
+#ifdef LINKED_LIST_ONLY_PROTOTYPE_DECLARATION
+;
+#else
 {
-#ifdef LINKED_LIST_BUFFER_DEBUG
-    assert(handle != NULL);
-#endif
+    LINKED_LIST_ASSERT(handle != NULL);
 
     if(handle->root->next == NULL)
     {
@@ -105,14 +163,25 @@ inline static linkedListBufferEntry_t * linkedList_getFirst(linkedListBuffer_t *
     }
     return handle->root;
 }
+#endif // NOT(LINKED_LIST_ONLY_PROTOTYPE_DECLARATION)
+
+
+
+#ifdef LINKED_LIST_INLINE_IMPLEMENTATION
+inline
+#endif 
+#ifdef LINKED_LIST_STATIC_IMPLEMENTATION
+static
+#endif 
+linkedListBufferEntry_t * linkedList_getPrevious(linkedListBuffer_t * handle, linkedListBufferEntry_t * entry)
+#ifdef LINKED_LIST_ONLY_PROTOTYPE_DECLARATION
+;
+#else
+{
+    LINKED_LIST_ASSERT(entry != NULL);
+    LINKED_LIST_ASSERT(handle != NULL);
 
 #ifdef LINKED_LIST_BUFFER_DUALLY_LINKED
-inline static  linkedListBufferEntry_t * linkedList_getPrevious(linkedListBuffer_t * handle, linkedListBufferEntry_t * entry)
-{
-#ifdef LINKED_LIST_BUFFER_DEBUG
-    assert(entry != NULL);
-    assert(handle != NULL);
-#endif
 
     (void) handle;
 
@@ -121,15 +190,8 @@ inline static  linkedListBufferEntry_t * linkedList_getPrevious(linkedListBuffer
         return NULL;
     }
     return entry->previous;
-}
 #else
-inline static  linkedListBufferEntry_t * linkedList_getPrevious(linkedListBuffer_t * handle, linkedListBufferEntry_t * entry)
-{
-#ifdef LINKED_LIST_BUFFER_DEBUG
-    assert(entry != NULL);
-    assert(handle != NULL);
-#endif
-
+    
     linkedListBufferEntry_t *  previous = handle->root;
 
     if(entry == handle->root)
@@ -151,17 +213,27 @@ inline static  linkedListBufferEntry_t * linkedList_getPrevious(linkedListBuffer
         }
         previous = previous->next;
     }
-    //entry not part of linked Chain
+    //entry not part of linked List
     return NULL; 
-}
 #endif    
+}
+#endif // NOT(LINKED_LIST_ONLY_PROTOTYPE_DECLARATION)
 
-inline static linkedListBufferEntry_t * linkedList_getNext(linkedListBuffer_t * handle, linkedListBufferEntry_t * entry)
+
+
+#ifdef LINKED_LIST_INLINE_IMPLEMENTATION
+inline
+#endif 
+#ifdef LINKED_LIST_STATIC_IMPLEMENTATION
+static
+#endif 
+linkedListBufferEntry_t * linkedList_getNext(linkedListBuffer_t * handle, linkedListBufferEntry_t * entry)
+#ifdef LINKED_LIST_ONLY_PROTOTYPE_DECLARATION
+;
+#else
 {
-#ifdef LINKED_LIST_BUFFER_DEBUG
-    assert(entry != NULL);
-    assert(handle != NULL);
-#endif
+    LINKED_LIST_ASSERT(entry != NULL);
+    LINKED_LIST_ASSERT(handle != NULL);
 
     (void) handle;
 
@@ -172,12 +244,22 @@ inline static linkedListBufferEntry_t * linkedList_getNext(linkedListBuffer_t * 
     }
     return entry->next;
 }
+#endif // NOT(LINKED_LIST_ONLY_PROTOTYPE_DECLARATION)
 
-inline static void linkedList_reset(linkedListBuffer_t * handle)
+
+
+#ifdef LINKED_LIST_INLINE_IMPLEMENTATION
+inline
+#endif 
+#ifdef LINKED_LIST_STATIC_IMPLEMENTATION
+static
+#endif 
+void linkedList_reset(linkedListBuffer_t * handle)
+#ifdef LINKED_LIST_ONLY_PROTOTYPE_DECLARATION
+;
+#else
 {
-#ifdef LINKED_LIST_BUFFER_DEBUG
-    assert(handle != NULL);
-#endif
+    LINKED_LIST_ASSERT(handle != NULL);
 
     for(linkedListArithmeticDataType_t i = 0; i < handle->bufferPoolSize; i++)
     {
@@ -196,16 +278,26 @@ inline static void linkedList_reset(linkedListBuffer_t * handle)
     handle->numActiveEntries = 0;
 #endif
 }
+#endif // NOT(LINKED_LIST_ONLY_PROTOTYPE_DECLARATION)
+
+
+
 
 #ifdef LINKED_LIST_BUFFER_CLEAR_MEMORY_ON_ALLOC
 #include <string.h>
 #endif
-
-inline static linkedListBufferEntry_t * linkedList_allocEntry(linkedListBuffer_t * handle)
-{
-#ifdef LINKED_LIST_BUFFER_DEBUG
-    assert(handle != NULL);
+#ifdef LINKED_LIST_INLINE_IMPLEMENTATION
+inline
 #endif 
+#ifdef LINKED_LIST_STATIC_IMPLEMENTATION
+static
+#endif 
+linkedListBufferEntry_t * linkedList_allocEntry(linkedListBuffer_t * handle)
+#ifdef LINKED_LIST_ONLY_PROTOTYPE_DECLARATION
+;
+#else
+{
+    LINKED_LIST_ASSERT(handle != NULL);
 
     for (linkedListArithmeticDataType_t i = 0; i < handle->bufferPoolSize; i++)
     {
@@ -220,8 +312,8 @@ inline static linkedListBufferEntry_t * linkedList_allocEntry(linkedListBuffer_t
             {
                 //No Valid root, become root
 
-#if defined(LINKED_LIST_BUFFER_DEBUG) && defined(LINKED_LIST_BUFFER_SIZE_AWARE)
-                assert(handle->numActiveEntries == 0);
+#ifdef LINKED_LIST_BUFFER_SIZE_AWARE
+            LINKED_LIST_ASSERT(handle->numActiveEntries == 0);
 #endif 
 
 #ifdef LINKED_LIST_BUFFER_DUALLY_LINKED
@@ -261,13 +353,23 @@ inline static linkedListBufferEntry_t * linkedList_allocEntry(linkedListBuffer_t
     //None Available
     return NULL;
 }
+#endif // NOT(LINKED_LIST_ONLY_PROTOTYPE_DECLARATION)
 
-inline static bool linkedList_freeEntry(linkedListBuffer_t * handle, linkedListBufferEntry_t * entry)
-{
-#ifdef LINKED_LIST_BUFFER_DEBUG
-    assert(handle != NULL);
-    assert(entry != NULL);
+
+
+#ifdef LINKED_LIST_INLINE_IMPLEMENTATION
+inline
 #endif 
+#ifdef LINKED_LIST_STATIC_IMPLEMENTATION
+static
+#endif 
+bool linkedList_freeEntry(linkedListBuffer_t * handle, linkedListBufferEntry_t * entry)
+#ifdef LINKED_LIST_ONLY_PROTOTYPE_DECLARATION
+;
+#else
+{
+    LINKED_LIST_ASSERT(handle != NULL);
+    LINKED_LIST_ASSERT(entry != NULL);
 
 #ifndef LINKED_LIST_BUFFER_DUALLY_LINKED    
     linkedListBufferEntry_t * previous = linkedList_getPrevious(handle, entry);
@@ -297,9 +399,7 @@ inline static bool linkedList_freeEntry(linkedListBuffer_t * handle, linkedListB
     else if(previous == NULL)
     {
         //Given Buffer not a part of active linked List
-#ifdef LINKED_LIST_BUFFER_DEBUG
-        assert(previous != NULL);
-#endif 
+        LINKED_LIST_ASSERT(previous != NULL);
         return false;
     }
 #endif
@@ -327,13 +427,22 @@ inline static bool linkedList_freeEntry(linkedListBuffer_t * handle, linkedListB
 
     return true;
 }
+#endif // NOT(LINKED_LIST_ONLY_PROTOTYPE_DECLARATION)
 
-inline static linkedListBufferEntry_t * linkedList_findBaseEntry(linkedListBuffer_t * handle, void * ptr)
+
+#ifdef LINKED_LIST_INLINE_IMPLEMENTATION
+inline
+#endif 
+#ifdef LINKED_LIST_STATIC_IMPLEMENTATION
+static
+#endif 
+linkedListBufferEntry_t * linkedList_findBaseEntry(linkedListBuffer_t * handle, void * ptr)
+#ifdef LINKED_LIST_ONLY_PROTOTYPE_DECLARATION
+;
+#else
 {
-#ifdef LINKED_LIST_BUFFER_DEBUG
-    assert(ptr != NULL);
-    assert(handle != NULL);
-#endif
+    LINKED_LIST_ASSERT(ptr != NULL);
+    LINKED_LIST_ASSERT(handle != NULL);
 
   if((linkedListArithmeticDataType_t)(ptr) < (linkedListArithmeticDataType_t)(&handle->bufferPool[0]))
   {
@@ -349,6 +458,7 @@ inline static linkedListBufferEntry_t * linkedList_findBaseEntry(linkedListBuffe
   }
   return NULL;
 }
+#endif // NOT(LINKED_LIST_ONLY_PROTOTYPE_DECLARATION)
 
 
 
