@@ -12,9 +12,9 @@
 
 //following just for testing
 #define LINKED_LIST_ONLY_PROTOTYPE_DECLARATION
-#include "linkedListBuffer.h" //Prototype
+#include "linkedListBuffer_t.h" //Prototype
 #undef LINKED_LIST_ONLY_PROTOTYPE_DECLARATION
-#include "linkedListBuffer.h" //Implementation
+#include "linkedListBuffer_t.h" //Implementation
 /***********************************************************************************/
 
 static linkedListBufferEntry_t bufferPool[10000];

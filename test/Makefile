@@ -1,6 +1,6 @@
 linkedListTest.elf:\
 	linkedListTest.c \
-	../inc/linkedListBuffer.h
+	../inc/linkedListBuffer_t.h
 
 	gcc -g -O0 -o linkedListTest.elf linkedListTest.c -I../inc
 	
