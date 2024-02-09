@@ -96,3 +96,4 @@ test_runner/test_linkedList_runner.c: ./test_linkedList.c
 clean:
 	$(CLEANUP) $(BUILD_DIR)
 	$(CLEANUP) $(LCOV_DIR)
+	$(CLEANUP) test_runner/*

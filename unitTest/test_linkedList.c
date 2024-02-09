@@ -46,7 +46,7 @@ void test_pushAndPop(void)
 {
     linkedListBufferEntry_t * entry = NULL;
 
-    entry = linkedList_allocEntry(&s_linkedListBuffer);
+    entry = linkedList_allocEntryAtBegin(&s_linkedListBuffer);
     entry->data = 0;
 
     TEST_ASSERT_EQUAL(linkedList_getFirst(&s_linkedListBuffer), entry); //entry should be first in LInked list
@@ -64,7 +64,7 @@ void test_pushAndPop(void)
     for (size_t i = 1; i < s_linkedListBuffer.bufferPoolSize; i++)
     {
         //Alloc Entry
-        linkedListBufferEntry_t * entry = linkedList_allocEntry(&s_linkedListBuffer);
+        linkedListBufferEntry_t * entry = linkedList_allocEntryAtBegin(&s_linkedListBuffer);
         //Fill Entry
         entry->data = i;
 
@@ -103,7 +103,7 @@ void test_removeEntriesAndInsertInNonEmptyList(void)
 {
     linkedListBufferEntry_t * entry = NULL;
 
-    entry = linkedList_allocEntry(&s_linkedListBuffer);
+    entry = linkedList_allocEntryAtBegin(&s_linkedListBuffer);
     entry->data = 0;
 
     TEST_ASSERT_EQUAL(linkedList_getFirst(&s_linkedListBuffer), entry); //entry should be first in LInked list
@@ -120,7 +120,7 @@ void test_removeEntriesAndInsertInNonEmptyList(void)
     for (size_t i = 1; i < s_linkedListBuffer.bufferPoolSize; i++)
     {
         //Alloc Entry
-        linkedListBufferEntry_t * entry = linkedList_allocEntry(&s_linkedListBuffer);
+        linkedListBufferEntry_t * entry = linkedList_allocEntryAtBegin(&s_linkedListBuffer);
         //Fill Entry
         entry->data = i;
 
@@ -165,7 +165,7 @@ void test_removeEntriesAndInsertInNonEmptyList(void)
     for (size_t i = 0; i < removedEntries; i++)
     {
         //Alloc Entry
-        linkedListBufferEntry_t * entry = linkedList_allocEntry(&s_linkedListBuffer);
+        linkedListBufferEntry_t * entry = linkedList_allocEntryAtBegin(&s_linkedListBuffer);
         
         //Fill Entry (with offset)
         entry->data = i + (s_linkedListBuffer.bufferPoolSize * 2);

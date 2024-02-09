@@ -324,7 +324,7 @@ inline
 #ifdef LINKED_LIST_STATIC_IMPLEMENTATION
 static
 #endif 
-linkedListBufferEntry_t * linkedList_allocEntry(linkedListBuffer_t * handle)
+linkedListBufferEntry_t * linkedList_allocEntryAtEnd(linkedListBuffer_t * handle)
 #ifdef LINKED_LIST_ONLY_PROTOTYPE_DECLARATION
 ;
 #else
@@ -387,7 +387,57 @@ linkedListBufferEntry_t * linkedList_allocEntry(linkedListBuffer_t * handle)
 }
 #endif // NOT(LINKED_LIST_ONLY_PROTOTYPE_DECLARATION)
 
+#ifdef LINKED_LIST_BUFFER_CLEAR_MEMORY_ON_ALLOC
+#include <string.h>
+#endif
+#ifdef LINKED_LIST_INLINE_IMPLEMENTATION
+inline
+#endif 
+#ifdef LINKED_LIST_STATIC_IMPLEMENTATION
+static
+#endif 
+linkedListBufferEntry_t * linkedList_allocEntryAtBegin(linkedListBuffer_t * handle)
+#ifdef LINKED_LIST_ONLY_PROTOTYPE_DECLARATION
+;
+#else
+{
+    LINKED_LIST_ASSERT(handle != NULL);
 
+    linkedListBufferEntry_t * previousRoot =( ((handle->root) && (handle->root->next)) ? handle->root : NULL);
+
+    for (linkedListArithmeticDataType_t i = 0; i < handle->bufferPoolSize; i++)
+    {
+        //Find unused Buffer
+        if(handle->bufferPool[i].next == NULL)
+        {
+
+            //Link previous root as next entry or mark entry as end of linked list if it was empty before
+            handle->bufferPool[i].next = ( previousRoot ? previousRoot : &handle->bufferPool[i] );
+
+#ifdef LINKED_LIST_BUFFER_DUALLY_LINKED
+            //mark as Begin of Linked List
+            handle->bufferPool[i].previous = &handle->bufferPool[i];
+#endif
+
+            //become new root
+            handle->root = &handle->bufferPool[i];
+
+#ifdef LINKED_LIST_BUFFER_CLEAR_MEMORY_ON_ALLOC
+            //Reset fresh Entry
+            memset(&handle->bufferPool[i].data,0x00,sizeof(linkedListBufferEntryDataType_t));
+#endif
+
+#ifdef LINKED_LIST_BUFFER_SIZE_AWARE
+            handle->numActiveEntries++;
+#endif
+
+            return &handle->bufferPool[i];
+        }
+    }
+    //None Available
+    return NULL;
+}
+#endif // NOT(LINKED_LIST_ONLY_PROTOTYPE_DECLARATION)
 
 #ifdef LINKED_LIST_INLINE_IMPLEMENTATION
 inline
