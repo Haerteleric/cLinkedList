@@ -147,6 +147,14 @@ linkedListBufferEntry_t * linkedList_getLast(linkedListBuffer_t * handle)
 ;
 #else
 {
+    LINKED_LIST_ASSERT(handle != NULL);
+
+    if(!handle->root || !handle->root->next)
+    {
+        //No Entry in list
+        return NULL;
+    }
+
     linkedListBufferEntry_t *  entry = handle->root;
     for (linkedListArithmeticDataType_t i = 0; i < handle->bufferPoolSize; i++)
     {
@@ -174,6 +182,12 @@ linkedListBufferEntry_t * linkedList_getFirst(linkedListBuffer_t * handle)
 #else
 {
     LINKED_LIST_ASSERT(handle != NULL);
+
+    if(!handle->root || !handle->root->next)
+    {
+        //No Entry in list
+        return NULL;
+    }
 
     if(handle->root->next == NULL)
     {
