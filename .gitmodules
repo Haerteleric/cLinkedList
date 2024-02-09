@@ -1,0 +1,6 @@
+[submodule "unitTest/extern/fff"]
+	path = unitTest/extern/fff
+	url = https://github.com/meekrosoft/fff
+[submodule "unitTest/extern/Unity"]
+	path = unitTest/extern/Unity
+	url = https://github.com/ThrowTheSwitch/Unity
