@@ -1,0 +1,3 @@
+unitTest/build
+unitTest/lcov
+unitTest/test_runner/*
