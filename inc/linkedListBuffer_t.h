@@ -87,7 +87,7 @@ inline
 #ifdef LINKED_LIST_STATIC_IMPLEMENTATION
 static
 #endif 
-linkedListArithmeticDataType_t linkedList_getNumActiveBuffer(linkedListBuffer_t * handle)
+linkedListArithmeticDataType_t linkedList_getNumEntriesUsed(linkedListBuffer_t * handle)
 #ifdef LINKED_LIST_ONLY_PROTOTYPE_DECLARATION
 ;
 #else
@@ -125,12 +125,12 @@ inline
 #ifdef LINKED_LIST_STATIC_IMPLEMENTATION
 static
 #endif 
-linkedListArithmeticDataType_t linkedList_getNumBufferLeft(linkedListBuffer_t * handle)
+linkedListArithmeticDataType_t linkedList_getNumEntriesFree(linkedListBuffer_t * handle)
 #ifdef LINKED_LIST_ONLY_PROTOTYPE_DECLARATION
 ;
 #else
 {
-    return handle->bufferPoolSize - linkedList_getNumActiveBuffer(handle);
+    return handle->bufferPoolSize - linkedList_getNumEntriesUsed(handle);
 }
 #endif // NOT(LINKED_LIST_ONLY_PROTOTYPE_DECLARATION)
 
@@ -142,7 +142,7 @@ inline
 #ifdef LINKED_LIST_STATIC_IMPLEMENTATION
 static
 #endif 
-linkedListBufferEntry_t * linkedList_getLast(linkedListBuffer_t * handle)
+linkedListBufferEntry_t * linkedList_getLastEntry(linkedListBuffer_t * handle)
 #ifdef LINKED_LIST_ONLY_PROTOTYPE_DECLARATION
 ;
 #else
@@ -176,7 +176,7 @@ inline
 #ifdef LINKED_LIST_STATIC_IMPLEMENTATION
 static
 #endif 
-linkedListBufferEntry_t * linkedList_getFirst(linkedListBuffer_t * handle)
+linkedListBufferEntry_t * linkedList_getFirstEntry(linkedListBuffer_t * handle)
 #ifdef LINKED_LIST_ONLY_PROTOTYPE_DECLARATION
 ;
 #else
@@ -362,7 +362,7 @@ linkedListBufferEntry_t * linkedList_allocEntryAtEnd(linkedListBuffer_t * handle
             else
             {
                 //Edit previously last Entry
-                linkedListBufferEntry_t * previousEnd = linkedList_getLast(handle);
+                linkedListBufferEntry_t * previousEnd = linkedList_getLastEntry(handle);
                 previousEnd->next = &handle->bufferPool[i];
 
 #ifdef LINKED_LIST_BUFFER_DUALLY_LINKED               
@@ -417,6 +417,13 @@ linkedListBufferEntry_t * linkedList_allocEntryAtBegin(linkedListBuffer_t * hand
 #ifdef LINKED_LIST_BUFFER_DUALLY_LINKED
             //mark as Begin of Linked List
             handle->bufferPool[i].previous = &handle->bufferPool[i];
+
+            
+            if(previousRoot)
+            {
+                //Mark Root as previous of previousRoot
+                previousRoot->previous = &handle->bufferPool[i];
+            }
 #endif
 
             //become new root

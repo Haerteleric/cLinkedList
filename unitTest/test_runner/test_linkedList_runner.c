@@ -11,8 +11,11 @@
 /*=======External Functions This Runner Calls=====*/
 extern void setUp(void);
 extern void tearDown(void);
+extern void test_rejectWhenFull(void);
 extern void test_pushAndPop(void);
+extern void test_PushAndPopReversed(void);
 extern void test_removeEntriesAndInsertInNonEmptyList(void);
+extern void test_removeEntriesAndInsertInNonEmptyListReversed(void);
 
 
 /*=======Mock Management=====*/
@@ -74,8 +77,11 @@ static void run_test(UnityTestFunction func, const char* name, UNITY_LINE_TYPE l
 int main(void)
 {
   UnityBegin("test_linkedList.c");
-  run_test(test_pushAndPop, "test_pushAndPop", 45);
-  run_test(test_removeEntriesAndInsertInNonEmptyList, "test_removeEntriesAndInsertInNonEmptyList", 102);
+  run_test(test_rejectWhenFull, "test_rejectWhenFull", 45);
+  run_test(test_pushAndPop, "test_pushAndPop", 82);
+  run_test(test_PushAndPopReversed, "test_PushAndPopReversed", 140);
+  run_test(test_removeEntriesAndInsertInNonEmptyList, "test_removeEntriesAndInsertInNonEmptyList", 202);
+  run_test(test_removeEntriesAndInsertInNonEmptyListReversed, "test_removeEntriesAndInsertInNonEmptyListReversed", 316);
 
   return UnityEnd();
 }
