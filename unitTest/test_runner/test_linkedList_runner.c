@@ -13,9 +13,11 @@ extern void setUp(void);
 extern void tearDown(void);
 extern void test_rejectWhenFull(void);
 extern void test_pushAndPop(void);
-extern void test_PushAndPopReversed(void);
-extern void test_removeEntriesAndInsertInNonEmptyList(void);
-extern void test_removeEntriesAndInsertInNonEmptyListReversed(void);
+extern void test_pushAndPopReversed(void);
+extern void test_removeEntriesAndInsertIntoNonEmpty(void);
+extern void test_removeEntriesAndInsertIntoNonEmptyReversed(void);
+extern void test_allocBefore(void);
+extern void test_allocAfter(void);
 
 
 /*=======Mock Management=====*/
@@ -79,9 +81,11 @@ int main(void)
   UnityBegin("test_linkedList.c");
   run_test(test_rejectWhenFull, "test_rejectWhenFull", 45);
   run_test(test_pushAndPop, "test_pushAndPop", 82);
-  run_test(test_PushAndPopReversed, "test_PushAndPopReversed", 140);
-  run_test(test_removeEntriesAndInsertInNonEmptyList, "test_removeEntriesAndInsertInNonEmptyList", 202);
-  run_test(test_removeEntriesAndInsertInNonEmptyListReversed, "test_removeEntriesAndInsertInNonEmptyListReversed", 316);
+  run_test(test_pushAndPopReversed, "test_pushAndPopReversed", 140);
+  run_test(test_removeEntriesAndInsertIntoNonEmpty, "test_removeEntriesAndInsertIntoNonEmpty", 202);
+  run_test(test_removeEntriesAndInsertIntoNonEmptyReversed, "test_removeEntriesAndInsertIntoNonEmptyReversed", 316);
+  run_test(test_allocBefore, "test_allocBefore", 433);
+  run_test(test_allocAfter, "test_allocAfter", 474);
 
   return UnityEnd();
 }

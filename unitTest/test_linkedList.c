@@ -20,12 +20,12 @@ DEFINE_FFF_GLOBALS;
 #include "linkedListBuffer_t.h" 
 /***********************************************************************************/
 
-static linkedListBufferEntry_t bufferPool[10000];
+static linkedListBufferEntry_t entryPool[10000];
 static linkedListBuffer_t s_linkedListBuffer = 
 {
-    .bufferPool = bufferPool,
-    .bufferPoolSize = sizeof(bufferPool)/sizeof(bufferPool[0]),
-    .root = NULL,
+    .entryPool = entryPool,
+    .entryPoolSize = sizeof(entryPool)/sizeof(entryPool[0]),
+    .rootEntry = NULL,
 #ifdef LINKED_LIST_BUFFER_SIZE_AWARE
     .numActiveEntries = 0,
 #endif
@@ -52,16 +52,16 @@ void test_rejectWhenFull(void)
     TEST_ASSERT_EQUAL(linkedList_getFirstEntry(&s_linkedListBuffer), entry); //entry should be first in Linked list
     TEST_ASSERT_EQUAL(linkedList_getLastEntry(&s_linkedListBuffer), entry); //entry should be last in Linked list
 
-    TEST_ASSERT_EQUAL(entry->next, entry); //entry should be marked as  Linked list End
+    TEST_ASSERT_EQUAL(entry->nextEntry, entry); //entry should be marked as  Linked list End
 
 #ifdef LINKED_LIST_BUFFER_DUALLY_LINKED
-    TEST_ASSERT_EQUAL(entry->previous, entry); //entry should be marked as Linked list Begin
+    TEST_ASSERT_EQUAL(entry->previousEntry, entry); //entry should be marked as Linked list Begin
 #endif
 
     TEST_ASSERT_EQUAL(linkedList_getNumEntriesUsed(&s_linkedListBuffer), 1);
 
     /* Fill Linked List */
-    for (size_t i = 1; i < s_linkedListBuffer.bufferPoolSize; i++)
+    for (size_t i = 1; i < s_linkedListBuffer.entryPoolSize; i++)
     {
         //Alloc Entry
         linkedListBufferEntry_t * entry = linkedList_allocEntryAtEnd(&s_linkedListBuffer);
@@ -70,9 +70,9 @@ void test_rejectWhenFull(void)
 
         //Check Memory Stats
         TEST_ASSERT_EQUAL_PTR(linkedList_getLastEntry(&s_linkedListBuffer), entry); //entry should be last in Linked list
-        TEST_ASSERT_EQUAL_PTR(entry->next, entry); //entry should be marked as  Linked list End
+        TEST_ASSERT_EQUAL_PTR(entry->nextEntry, entry); //entry should be marked as  Linked list End
         TEST_ASSERT_EQUAL(linkedList_getNumEntriesUsed(&s_linkedListBuffer), i+1);
-        TEST_ASSERT_EQUAL(linkedList_getNumEntriesFree(&s_linkedListBuffer), ( s_linkedListBuffer.bufferPoolSize - (i + 1) ) );
+        TEST_ASSERT_EQUAL(linkedList_getNumEntriesFree(&s_linkedListBuffer), ( s_linkedListBuffer.entryPoolSize - (i + 1) ) );
     }
 
     TEST_ASSERT_EQUAL_PTR(NULL, linkedList_allocEntryAtEnd(&s_linkedListBuffer));
@@ -89,16 +89,16 @@ void test_pushAndPop(void)
     TEST_ASSERT_EQUAL(linkedList_getFirstEntry(&s_linkedListBuffer), entry); //entry should be first in Linked list
     TEST_ASSERT_EQUAL(linkedList_getLastEntry(&s_linkedListBuffer), entry); //entry should be last in Linked list
 
-    TEST_ASSERT_EQUAL(entry->next, entry); //entry should be marked as  Linked list End
+    TEST_ASSERT_EQUAL(entry->nextEntry, entry); //entry should be marked as  Linked list End
 
 #ifdef LINKED_LIST_BUFFER_DUALLY_LINKED
-    TEST_ASSERT_EQUAL(entry->previous, entry); //entry should be marked as Linked list Begin
+    TEST_ASSERT_EQUAL(entry->previousEntry, entry); //entry should be marked as Linked list Begin
 #endif
 
    TEST_ASSERT_EQUAL(linkedList_getNumEntriesUsed(&s_linkedListBuffer), 1);
 
     /* Fill Linked List */
-    for (size_t i = 1; i < s_linkedListBuffer.bufferPoolSize; i++)
+    for (size_t i = 1; i < s_linkedListBuffer.entryPoolSize; i++)
     {
         //Alloc Entry
         linkedListBufferEntry_t * entry = linkedList_allocEntryAtEnd(&s_linkedListBuffer);
@@ -107,15 +107,15 @@ void test_pushAndPop(void)
 
         //Check Memory Stats
         TEST_ASSERT_EQUAL_PTR(linkedList_getLastEntry(&s_linkedListBuffer), entry); //entry should be last in Linked list
-        TEST_ASSERT_EQUAL_PTR(entry->next, entry); //entry should be marked as  Linked list End
+        TEST_ASSERT_EQUAL_PTR(entry->nextEntry, entry); //entry should be marked as  Linked list End
         TEST_ASSERT_EQUAL(linkedList_getNumEntriesUsed(&s_linkedListBuffer), i+1);
-        TEST_ASSERT_EQUAL(linkedList_getNumEntriesFree(&s_linkedListBuffer), ( s_linkedListBuffer.bufferPoolSize - (i + 1) ) );
+        TEST_ASSERT_EQUAL(linkedList_getNumEntriesFree(&s_linkedListBuffer), ( s_linkedListBuffer.entryPoolSize - (i + 1) ) );
     }
 
     entry = NULL;
 
     /* Flush Linked List */
-    for (size_t i = 0; i < s_linkedListBuffer.bufferPoolSize; i++)
+    for (size_t i = 0; i < s_linkedListBuffer.entryPoolSize; i++)
     {
         //Get Entry
         entry = linkedList_getFirstEntry(&s_linkedListBuffer);
@@ -147,16 +147,16 @@ void test_pushAndPopReversed(void)
     TEST_ASSERT_EQUAL_PTR(linkedList_getFirstEntry(&s_linkedListBuffer), entry); //entry should be first in Linked list
     TEST_ASSERT_EQUAL_PTR(linkedList_getLastEntry(&s_linkedListBuffer), entry); //entry should be last in Linked list
 
-    TEST_ASSERT_EQUAL_PTR(entry->next, entry); //entry should be marked as  Linked list End
+    TEST_ASSERT_EQUAL_PTR(entry->nextEntry, entry); //entry should be marked as  Linked list End
 
 #ifdef LINKED_LIST_BUFFER_DUALLY_LINKED
-    TEST_ASSERT_EQUAL(entry->previous, entry); //entry should be marked as Linked list Begin
+    TEST_ASSERT_EQUAL(entry->previousEntry, entry); //entry should be marked as Linked list Begin
 #endif
 
    TEST_ASSERT_EQUAL(1, linkedList_getNumEntriesUsed(&s_linkedListBuffer));
 
     /* Fill Linked List */
-    for (size_t i = 1; i < s_linkedListBuffer.bufferPoolSize; i++)
+    for (size_t i = 1; i < s_linkedListBuffer.entryPoolSize; i++)
     {
         //Alloc Entry
         linkedListBufferEntry_t * entry = linkedList_allocEntryAtBegin(&s_linkedListBuffer);
@@ -167,17 +167,17 @@ void test_pushAndPopReversed(void)
         TEST_ASSERT_EQUAL(linkedList_getFirstEntry(&s_linkedListBuffer), entry); //entry should be first in Linked list
 
 #ifdef LINKED_LIST_BUFFER_DUALLY_LINKED
-    TEST_ASSERT_EQUAL(entry->previous, entry); //entry should be marked as Linked list Begin
+    TEST_ASSERT_EQUAL(entry->previousEntry, entry); //entry should be marked as Linked list Begin
 #endif
 
         TEST_ASSERT_EQUAL(linkedList_getNumEntriesUsed(&s_linkedListBuffer), i+1);
-        TEST_ASSERT_EQUAL(linkedList_getNumEntriesFree(&s_linkedListBuffer), ( s_linkedListBuffer.bufferPoolSize - (i + 1) ) );
+        TEST_ASSERT_EQUAL(linkedList_getNumEntriesFree(&s_linkedListBuffer), ( s_linkedListBuffer.entryPoolSize - (i + 1) ) );
     }
 
     entry = NULL;
 
     /* Flush Linked List */
-    for (size_t i = 0; i < s_linkedListBuffer.bufferPoolSize; i++)
+    for (size_t i = 0; i < s_linkedListBuffer.entryPoolSize; i++)
     {
         //Get Entry
         entry = linkedList_getLastEntry(&s_linkedListBuffer);
@@ -199,7 +199,7 @@ void test_pushAndPopReversed(void)
     TEST_ASSERT_EQUAL_PTR(NULL, linkedList_getLastEntry(&s_linkedListBuffer));
 }
 
-void test_removeEntriesAndInsertInNonEmptyList(void)
+void test_removeEntriesAndInsertIntoNonEmpty(void)
 {
     linkedListBufferEntry_t * entry = NULL;
 
@@ -209,15 +209,15 @@ void test_removeEntriesAndInsertInNonEmptyList(void)
     TEST_ASSERT_EQUAL_PTR(linkedList_getFirstEntry(&s_linkedListBuffer), entry); //entry should be first in Linked list
     TEST_ASSERT_EQUAL_PTR(linkedList_getLastEntry(&s_linkedListBuffer), entry); //entry should be last in Linked list
 
-    TEST_ASSERT_EQUAL_PTR(entry->next, entry); //entry should be marked as  Linked list End
+    TEST_ASSERT_EQUAL_PTR(entry->nextEntry, entry); //entry should be marked as  Linked list End
 
 #ifdef LINKED_LIST_BUFFER_DUALLY_LINKED
-    TEST_ASSERT_EQUAL(entry->previous, entry); //entry should be marked as Linked list Begin
+    TEST_ASSERT_EQUAL(entry->previousEntry, entry); //entry should be marked as Linked list Begin
 #endif
 
    TEST_ASSERT_EQUAL(linkedList_getNumEntriesUsed(&s_linkedListBuffer), 1);
 
-    for (size_t i = 1; i < s_linkedListBuffer.bufferPoolSize; i++)
+    for (size_t i = 1; i < s_linkedListBuffer.entryPoolSize; i++)
     {
         //Alloc Entry
         linkedListBufferEntry_t * entry = linkedList_allocEntryAtEnd(&s_linkedListBuffer);
@@ -226,9 +226,9 @@ void test_removeEntriesAndInsertInNonEmptyList(void)
 
         //Check Memory Stats
         TEST_ASSERT_EQUAL(linkedList_getLastEntry(&s_linkedListBuffer), entry); //entry should be last in Linked list
-        TEST_ASSERT_EQUAL(entry->next, entry); //entry should be marked as  Linked list End
+        TEST_ASSERT_EQUAL(entry->nextEntry, entry); //entry should be marked as  Linked list End
         TEST_ASSERT_EQUAL(i+1, linkedList_getNumEntriesUsed(&s_linkedListBuffer));
-        TEST_ASSERT_EQUAL(( s_linkedListBuffer.bufferPoolSize - (i + 1) ), linkedList_getNumEntriesFree(&s_linkedListBuffer)) ;
+        TEST_ASSERT_EQUAL(( s_linkedListBuffer.entryPoolSize - (i + 1) ), linkedList_getNumEntriesFree(&s_linkedListBuffer)) ;
     }
 
     /* Remove every Second Entry */
@@ -237,13 +237,13 @@ void test_removeEntriesAndInsertInNonEmptyList(void)
 
     entry = linkedList_getFirstEntry(&s_linkedListBuffer);
 
-    for (size_t i = 0; i < s_linkedListBuffer.bufferPoolSize; i++)
+    for (size_t i = 0; i < s_linkedListBuffer.entryPoolSize; i++)
     {
         TEST_ASSERT_NOT_NULL( entry);
 
         linkedListBufferEntry_t * nextEntry = linkedList_getNext(&s_linkedListBuffer,entry);
 
-        if(i < (s_linkedListBuffer.bufferPoolSize-1))
+        if(i < (s_linkedListBuffer.entryPoolSize-1))
             TEST_ASSERT_EQUAL(entry->data+1, nextEntry->data);
 
         if((i%2) > 0)
@@ -268,10 +268,10 @@ void test_removeEntriesAndInsertInNonEmptyList(void)
         linkedListBufferEntry_t * entry = linkedList_allocEntryAtEnd(&s_linkedListBuffer);
         
         //Fill Entry (with offset)
-        entry->data = i + (s_linkedListBuffer.bufferPoolSize * 2);
+        entry->data = i + (s_linkedListBuffer.entryPoolSize * 2);
     }
 
-    TEST_ASSERT_EQUAL(s_linkedListBuffer.bufferPoolSize, linkedList_getNumEntriesUsed(&s_linkedListBuffer));
+    TEST_ASSERT_EQUAL(s_linkedListBuffer.entryPoolSize, linkedList_getNumEntriesUsed(&s_linkedListBuffer));
     TEST_ASSERT_EQUAL(0, linkedList_getNumEntriesFree(&s_linkedListBuffer));
 
     /* Remove the original Entries */
@@ -299,7 +299,7 @@ void test_removeEntriesAndInsertInNonEmptyList(void)
 
         //Inspect Entry
         TEST_ASSERT_NOT_NULL( entry);
-        TEST_ASSERT_EQUAL(i + (s_linkedListBuffer.bufferPoolSize * 2), entry->data);
+        TEST_ASSERT_EQUAL(i + (s_linkedListBuffer.entryPoolSize * 2), entry->data);
 
         //Delete Entry
         TEST_ASSERT_TRUE(linkedList_freeEntry(&s_linkedListBuffer,entry));
@@ -313,7 +313,7 @@ void test_removeEntriesAndInsertInNonEmptyList(void)
     TEST_ASSERT_EQUAL_PTR(NULL, linkedList_getLastEntry(&s_linkedListBuffer));
 }
 
-void test_removeEntriesAndInsertInNonEmptyListReversed(void)
+void test_removeEntriesAndInsertIntoNonEmptyReversed(void)
 {
     linkedListBufferEntry_t * entry = NULL;
 
@@ -323,15 +323,15 @@ void test_removeEntriesAndInsertInNonEmptyListReversed(void)
     TEST_ASSERT_EQUAL_PTR(linkedList_getFirstEntry(&s_linkedListBuffer), entry); //entry should be first in Linked list
     TEST_ASSERT_EQUAL_PTR(linkedList_getLastEntry(&s_linkedListBuffer), entry); //entry should be last in Linked list
 
-    TEST_ASSERT_EQUAL_PTR(entry->next, entry); //entry should be marked as  Linked list End
+    TEST_ASSERT_EQUAL_PTR(entry->nextEntry, entry); //entry should be marked as  Linked list End
 
 #ifdef LINKED_LIST_BUFFER_DUALLY_LINKED
-    TEST_ASSERT_EQUAL(entry->previous, entry); //entry should be marked as Linked list Begin
+    TEST_ASSERT_EQUAL(entry->previousEntry, entry); //entry should be marked as Linked list Begin
 #endif
 
    TEST_ASSERT_EQUAL(linkedList_getNumEntriesUsed(&s_linkedListBuffer), 1);
 
-    for (size_t i = 1; i < s_linkedListBuffer.bufferPoolSize; i++)
+    for (size_t i = 1; i < s_linkedListBuffer.entryPoolSize; i++)
     {
         //Alloc Entry
         linkedListBufferEntry_t * entry = linkedList_allocEntryAtBegin(&s_linkedListBuffer);
@@ -342,10 +342,10 @@ void test_removeEntriesAndInsertInNonEmptyListReversed(void)
         TEST_ASSERT_EQUAL(linkedList_getFirstEntry(&s_linkedListBuffer), entry); //entry should be last in Linked list
 
 #ifdef LINKED_LIST_BUFFER_DUALLY_LINKED
-        TEST_ASSERT_EQUAL(entry->previous, entry); //entry should be marked as Linked list Begin
+        TEST_ASSERT_EQUAL(entry->previousEntry, entry); //entry should be marked as Linked list Begin
 #endif
         TEST_ASSERT_EQUAL(i+1, linkedList_getNumEntriesUsed(&s_linkedListBuffer));
-        TEST_ASSERT_EQUAL(( s_linkedListBuffer.bufferPoolSize - (i + 1) ), linkedList_getNumEntriesFree(&s_linkedListBuffer)) ;
+        TEST_ASSERT_EQUAL(( s_linkedListBuffer.entryPoolSize - (i + 1) ), linkedList_getNumEntriesFree(&s_linkedListBuffer)) ;
     }
 
     /* Remove every Second Entry */
@@ -354,13 +354,13 @@ void test_removeEntriesAndInsertInNonEmptyListReversed(void)
 
     entry = linkedList_getLastEntry(&s_linkedListBuffer);
 
-    for (size_t i = 0; i < s_linkedListBuffer.bufferPoolSize; i++)
+    for (size_t i = 0; i < s_linkedListBuffer.entryPoolSize; i++)
     {
         TEST_ASSERT_NOT_NULL( entry);
 
         linkedListBufferEntry_t * nextEntry = linkedList_getPrevious(&s_linkedListBuffer,entry);
 
-        if(i < (s_linkedListBuffer.bufferPoolSize-1))
+        if(i < (s_linkedListBuffer.entryPoolSize-1))
             TEST_ASSERT_EQUAL(entry->data+1, nextEntry->data);
 
         if((i%2) > 0)
@@ -385,10 +385,10 @@ void test_removeEntriesAndInsertInNonEmptyListReversed(void)
         linkedListBufferEntry_t * entry = linkedList_allocEntryAtBegin(&s_linkedListBuffer);
         
         //Fill Entry (with offset)
-        entry->data = i + (s_linkedListBuffer.bufferPoolSize * 2);
+        entry->data = i + (s_linkedListBuffer.entryPoolSize * 2);
     }
 
-    TEST_ASSERT_EQUAL(s_linkedListBuffer.bufferPoolSize, linkedList_getNumEntriesUsed(&s_linkedListBuffer));
+    TEST_ASSERT_EQUAL(s_linkedListBuffer.entryPoolSize, linkedList_getNumEntriesUsed(&s_linkedListBuffer));
     TEST_ASSERT_EQUAL(0, linkedList_getNumEntriesFree(&s_linkedListBuffer));
 
     /* Remove the original Entries */
@@ -416,10 +416,93 @@ void test_removeEntriesAndInsertInNonEmptyListReversed(void)
 
         //Inspect Entry
         TEST_ASSERT_NOT_NULL( entry);
-        TEST_ASSERT_EQUAL(i + (s_linkedListBuffer.bufferPoolSize * 2), entry->data);
+        TEST_ASSERT_EQUAL(i + (s_linkedListBuffer.entryPoolSize * 2), entry->data);
 
         //Delete Entry
         TEST_ASSERT_TRUE(linkedList_freeEntry(&s_linkedListBuffer,entry));
+    }
+
+    //Confirm List is empty
+    TEST_ASSERT_EQUAL(0, linkedList_getNumEntriesUsed(&s_linkedListBuffer));
+
+    //Confirm no entries can be retrieved
+    TEST_ASSERT_EQUAL_PTR(NULL, linkedList_getFirstEntry(&s_linkedListBuffer));
+    TEST_ASSERT_EQUAL_PTR(NULL, linkedList_getLastEntry(&s_linkedListBuffer));
+}
+
+void test_allocBefore(void)
+{
+    unsigned int inputEntries[] = {1,2,3,4,5};
+    unsigned int insertedEntry = 77;
+    unsigned int expectedOutputEntries[] = {77,1,2,77,3,4,5};
+
+    linkedListBufferEntry_t * targetEntry = NULL;
+    for (size_t i = 0; i < sizeof(inputEntries)/sizeof(inputEntries[0]); i++)
+    {
+        linkedListBufferEntry_t * entry = linkedList_allocEntryAtEnd(&s_linkedListBuffer);
+        entry->data = inputEntries[i];
+
+        if(inputEntries[i] == 3)
+        {
+            targetEntry = entry;
+        }
+    }
+
+    linkedListBufferEntry_t * entry = linkedList_allocEntryBefore(&s_linkedListBuffer, targetEntry);
+    entry->data = insertedEntry;
+
+    entry = linkedList_allocEntryBefore(&s_linkedListBuffer, linkedList_getFirstEntry(&s_linkedListBuffer));
+    entry->data = insertedEntry;
+
+    for (size_t i = 0; i < sizeof(expectedOutputEntries)/sizeof(expectedOutputEntries[0]); i++)
+    {
+        linkedListBufferEntry_t * entry = linkedList_getFirstEntry(&s_linkedListBuffer);
+
+        TEST_ASSERT_EQUAL(expectedOutputEntries[i], entry->data);
+
+        linkedList_freeEntry(&s_linkedListBuffer, entry);
+    }
+
+    //Confirm List is empty
+    TEST_ASSERT_EQUAL(0, linkedList_getNumEntriesUsed(&s_linkedListBuffer));
+
+    //Confirm no entries can be retrieved
+    TEST_ASSERT_EQUAL_PTR(NULL, linkedList_getFirstEntry(&s_linkedListBuffer));
+    TEST_ASSERT_EQUAL_PTR(NULL, linkedList_getLastEntry(&s_linkedListBuffer));
+}
+
+void test_allocAfter(void)
+{
+    unsigned int inputEntries[] = {1,2,3,4,5};
+    unsigned int insertedEntry = 77;
+    unsigned int expectedOutputEntries[] = {1,2,3,77,4,5,77};
+
+    linkedListBufferEntry_t * targetEntry = NULL;
+    for (size_t i = 0; i < sizeof(inputEntries)/sizeof(inputEntries[0]); i++)
+    {
+        linkedListBufferEntry_t * entry = linkedList_allocEntryAtEnd(&s_linkedListBuffer);
+        entry->data = inputEntries[i];
+
+        if(inputEntries[i] == 3)
+        {
+            targetEntry = entry;
+        }
+    }
+
+    linkedListBufferEntry_t * entry = linkedList_allocEntryAfter(&s_linkedListBuffer, targetEntry);
+    entry->data = insertedEntry;
+
+    entry = linkedList_allocEntryAfter(&s_linkedListBuffer, linkedList_getLastEntry(&s_linkedListBuffer));
+    entry->data = insertedEntry;
+
+
+    for (size_t i = 0; i < sizeof(expectedOutputEntries)/sizeof(expectedOutputEntries[0]); i++)
+    {
+        linkedListBufferEntry_t * entry = linkedList_getFirstEntry(&s_linkedListBuffer);
+
+        TEST_ASSERT_EQUAL(expectedOutputEntries[i], entry->data);
+
+        linkedList_freeEntry(&s_linkedListBuffer, entry);
     }
 
     //Confirm List is empty
